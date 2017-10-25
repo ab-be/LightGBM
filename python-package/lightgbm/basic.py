@@ -643,8 +643,6 @@ class Dataset(object):
             params["verbose"] = 1
         """get categorical features"""
         if categorical_feature is not None:
-            if "categorical_feature" in params or "categorical_column" in params:
-                warnings.warn('categorical_feature in param dict is overrided. New categorical_feature is {}'.format(sorted(list(categorical_feature))))
             categorical_indices = set()
             feature_dict = {}
             if feature_name is not None:
@@ -658,6 +656,10 @@ class Dataset(object):
                     raise TypeError("Wrong type({}) or unknown name({}) in categorical_feature"
                                     .format(type(name).__name__, name))
             if categorical_indices:
+                if "categorical_feature" in params or "categorical_column" in params:
+                    warnings.warn('categorical_feature in param dict is overrided.')
+                    params.pop("categorical_feature", None)
+                    params.pop("categorical_column", None)
                 params['categorical_column'] = sorted(categorical_indices)
 
         params_str = param_dict_to_str(params)
