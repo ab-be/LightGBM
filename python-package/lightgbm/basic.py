@@ -552,7 +552,7 @@ class _InnerPredictor(object):
 
 class Dataset(object):
     """Dataset in LightGBM."""
-    def __init__(self, data, label=None, max_bin=255, reference=None,
+    def __init__(self, data, label=None, max_bin=None, reference=None,
                  weight=None, group=None, init_score=None, silent=False,
                  feature_name='auto', categorical_feature='auto', params=None,
                  free_raw_data=True):
@@ -565,7 +565,7 @@ class Dataset(object):
             If string, it represents the path to txt file.
         label : list or numpy 1-D array, optional (default=None)
             Label of the data.
-        max_bin : int, optional (default=255)
+        max_bin : int, optional (default=None)
             Max number of discrete bins for features.
         reference : Dataset or None, optional (default=None)
             If this is Dataset for validation, training data should be used as reference.
@@ -616,7 +616,7 @@ class Dataset(object):
             _safe_call(_LIB.LGBM_DatasetFree(self.handle))
             self.handle = None
 
-    def _lazy_init(self, data, label=None, max_bin=255, reference=None,
+    def _lazy_init(self, data, label=None, max_bin=None, reference=None,
                    weight=None, group=None, init_score=None, predictor=None,
                    silent=False, feature_name='auto',
                    categorical_feature='auto', params=None):
@@ -633,8 +633,8 @@ class Dataset(object):
         params = {} if params is None else params
         self.max_bin = max_bin
         self.predictor = predictor
-        if "max_bin" not in params:
-            params["max_bin"] = max_bin
+        if self.max_bin is not None:
+            params["max_bin"] = self.max_bin
         if "verbosity" in params:
             params.setdefault("verbose", params.pop("verbosity"))
         if silent:
@@ -643,7 +643,7 @@ class Dataset(object):
             params["verbose"] = 1
         """get categorical features"""
         if categorical_feature is not None:
-            if "categorical_feature" in params or "categorical_column" in params::
+            if "categorical_feature" in params or "categorical_column" in params:
                 warnings.warn('categorical_feature in param dict is overrided. New categorical_feature is {}'.format(sorted(list(categorical_feature))))
             categorical_indices = set()
             feature_dict = {}

@@ -183,7 +183,6 @@ inline static const char* Atof(const char* p, double* out) {
   while (*p == ' ') {
     ++p;
   }
-  auto start_p = p;
   // Get sign, if any.
   sign = 1.0;
   if (*p == '-') {
