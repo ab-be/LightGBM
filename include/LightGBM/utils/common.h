@@ -177,16 +177,17 @@ inline static double Pow(T base, int power) {
 
 inline static const char* Atof(const char* p, double* out) {
   int frac;
-  int sign = 1, value = 0, right = 0, right_n = 0;
-  double scale;
+  double sign, value, scale;
   *out = NAN;
   // Skip leading white space, if any.
   while (*p == ' ') {
     ++p;
   }
   auto start_p = p;
+  // Get sign, if any.
+  sign = 1.0;
   if (*p == '-') {
-    sign = -1;
+    sign = -1.0;
     ++p;
   } else if (*p == '+') {
     ++p;
@@ -195,29 +196,28 @@ inline static const char* Atof(const char* p, double* out) {
   // is a number
   if ((*p >= '0' && *p <= '9') || *p == '.' || *p == 'e' || *p == 'E') {
     // Get digits before decimal point or exponent, if any.
-    for (; *p >= '0' && *p <= '9'; ++p) {
-      value = value * 10 + (*p - '0');
+    for (value = 0.0; *p >= '0' && *p <= '9'; ++p) {
+      value = value * 10.0 + (*p - '0');
     }
 
     // Get digits after decimal point, if any.
     if (*p == '.') {
+      double right = 0.0;
+      int nn = 0;
       ++p;
-      for (; *p >= '0' && *p <= '9'; ++right_n, ++p) {
-        right = right * 10 + (*p - '0');
+      while (*p >= '0' && *p <= '9') {
+        right = (*p - '0') + right * 10.0;
+        ++nn;
+        ++p;
       }
-      while (right % 10 == 0 && right > 0) {
-        right /= 10;
-        --right_n;
-      }
+      value += right / Pow(10.0, nn);
     }
-    *out = static_cast<double>(value) + static_cast<double>(right) / Pow(10.0, right_n);
-    if (sign < 0)
-      *out = -*out;
+
     // Handle exponent, if any.
+    frac = 0;
+    scale = 1.0;
     if ((*p == 'e') || (*p == 'E')) {
-      frac = 0;
-      scale = 1.0;
-      int expon;
+      uint32_t expon;
       // Get sign of exponent, if any.
       ++p;
       if (*p == '-') {
@@ -235,8 +235,9 @@ inline static const char* Atof(const char* p, double* out) {
       while (expon >= 50) { scale *= 1E50; expon -= 50; }
       while (expon >= 8) { scale *= 1E8;  expon -= 8; }
       while (expon > 0) { scale *= 10.0; expon -= 1; }
-      *out = (frac ? (*out / scale) : (*out * scale));
     }
+    // Return signed and scaled floating point result.
+    *out = sign * (frac ? (value / scale) : (value * scale));
     double other = 0.0;
     std::string str(start_p, p - start_p);
     other = std::stod(str);
@@ -248,13 +249,12 @@ inline static const char* Atof(const char* p, double* out) {
       Log::Warning("float point different: %s", str_buf.str().c_str());
       ++meet_cnt;
     }
-    // Return signed and scaled floating point result.
   } else {
     size_t cnt = 0;
     while (*(p + cnt) != '\0' && *(p + cnt) != ' '
-      && *(p + cnt) != '\t' && *(p + cnt) != ','
-      && *(p + cnt) != '\n' && *(p + cnt) != '\r'
-      && *(p + cnt) != ':') {
+           && *(p + cnt) != '\t' && *(p + cnt) != ','
+           && *(p + cnt) != '\n' && *(p + cnt) != '\r'
+           && *(p + cnt) != ':') {
       ++cnt;
     }
     if (cnt > 0) {
@@ -277,8 +277,6 @@ inline static const char* Atof(const char* p, double* out) {
 
   return p;
 }
-
-
 
 inline bool AtoiAndCheck(const char* p, int* out) {
   const char* after = Atoi(p, out);
