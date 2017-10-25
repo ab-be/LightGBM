@@ -238,17 +238,6 @@ inline static const char* Atof(const char* p, double* out) {
     }
     // Return signed and scaled floating point result.
     *out = sign * (frac ? (value / scale) : (value * scale));
-    double other = 0.0;
-    std::string str(start_p, p - start_p);
-    other = std::stod(str);
-    static int meet_cnt = 0;
-    if (std::fabs(other - *out) > 1e-20 && meet_cnt < 100) {
-      std::stringstream str_buf;
-      str_buf << std::setprecision(std::numeric_limits<double>::digits10 + 2);
-      str_buf << str.c_str() << ", " << *out << ", " << other;
-      Log::Warning("float point different: %s", str_buf.str().c_str());
-      ++meet_cnt;
-    }
   } else {
     size_t cnt = 0;
     while (*(p + cnt) != '\0' && *(p + cnt) != ' '

@@ -633,7 +633,8 @@ class Dataset(object):
         params = {} if params is None else params
         self.max_bin = max_bin
         self.predictor = predictor
-        params["max_bin"] = max_bin
+        if "max_bin" not in params:
+            params["max_bin"] = max_bin
         if "verbosity" in params:
             params.setdefault("verbose", params.pop("verbosity"))
         if silent:
@@ -642,6 +643,8 @@ class Dataset(object):
             params["verbose"] = 1
         """get categorical features"""
         if categorical_feature is not None:
+            if "categorical_feature" in params or "categorical_column" in params::
+                warnings.warn('categorical_feature in param dict is overrided. New categorical_feature is {}'.format(sorted(list(categorical_feature))))
             categorical_indices = set()
             feature_dict = {}
             if feature_name is not None:
