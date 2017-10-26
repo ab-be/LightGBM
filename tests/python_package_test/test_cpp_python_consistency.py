@@ -73,7 +73,7 @@ class TestEngine(unittest.TestCase):
     def test_lambdarank(self):
         fd = FileLoader('../../examples/lambdarank', 'rank')
         X_train, y_train, _ = fd.load_dataset('.train', is_sparse=True)
-        X_test, _, X_test_fn= fd.load_dataset('.test', is_sparse=True)
+        X_test, _, X_test_fn = fd.load_dataset('.test', is_sparse=True)
         group_train = fd.load_field('.train.query')
         lgb_train = lgb.Dataset(X_train, y_train, group=group_train)
         fd.train_predict_check(lgb_train, X_test, X_test_fn)
