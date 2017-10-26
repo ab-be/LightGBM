@@ -63,7 +63,7 @@ int Tree::Split(int leaf, int feature, int real_feature, uint32_t threshold_bin,
     SetMissingType(&decision_type_[new_node_idx], 2);
   }
   threshold_in_bin_[new_node_idx] = threshold_bin;
-  threshold_[new_node_idx] = Common::GetDoubleUpperBound(Common::AvoidInf(threshold_double));
+  threshold_[new_node_idx] = Common::AvoidInf(threshold_double);
   ++num_leaves_;
   return num_leaves_ - 1;
 }
