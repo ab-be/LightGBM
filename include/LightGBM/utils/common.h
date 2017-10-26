@@ -646,10 +646,9 @@ inline bool FindInBitset(const uint32_t* bits, int n, T pos) {
   return (bits[i1] >> i2) & 1;
 }
 
-inline static bool CheckDoubleEqual(double a, double b) {
-  double lower = std::nextafter(a, -INFINITY);
+inline static bool CheckDoubleEqualOrdered(double a, double b) {
   double upper = std::nextafter(a, INFINITY);
-  return b >= lower && b <= upper;
+  return b <= upper;
 }
 
 inline static double GetDoubleUpperBound(double a) {

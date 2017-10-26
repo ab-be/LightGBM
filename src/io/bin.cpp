@@ -241,7 +241,7 @@ namespace LightGBM {
     }
 
     for (int i = 1; i < num_sample_values; ++i) {
-      if (!Common::CheckDoubleEqual(values[i - 1], values[i])) {
+      if (!Common::CheckDoubleEqualOrdered(values[i - 1], values[i])) {
         if (values[i - 1] < 0.0f && values[i] > 0.0f) {
           distinct_values.push_back(0.0f);
           counts.push_back(zero_cnt);
