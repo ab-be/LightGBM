@@ -646,6 +646,13 @@ inline bool FindInBitset(const uint32_t* bits, int n, T pos) {
   return (bits[i1] >> i2) & 1;
 }
 
+inline static bool CheckDoubleEqual(double a, double b) {
+  double lower = std::nextafter(a, -INFINITY);
+  double upper = std::nextafter(b, INFINITY);
+  return b >= lower && b <= upper;
+}
+
+
 }  // namespace Common
 
 }  // namespace LightGBM

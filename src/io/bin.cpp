@@ -241,7 +241,7 @@ namespace LightGBM {
     }
 
     for (int i = 1; i < num_sample_values; ++i) {
-      if (values[i] != values[i - 1]) {
+      if (Common::CheckDoubleEqual(values[i - 1], values[i])) {
         if (values[i - 1] < 0.0f && values[i] > 0.0f) {
           distinct_values.push_back(0.0f);
           counts.push_back(zero_cnt);
@@ -249,6 +249,8 @@ namespace LightGBM {
         distinct_values.push_back(values[i]);
         counts.push_back(1);
       } else {
+        // use the large value
+        distinct_values.back() = values[i];
         ++counts.back();
       }
     }
