@@ -26,7 +26,8 @@ class FileLoader(object):
     def load_dataset(self, suffix, is_sparse=False):
         filename = os.path.join(self.directory, self.prefix + suffix)
         if is_sparse:
-            return load_svmlight_file(filename, dtype=np.float64), filename
+            X, Y = load_svmlight_file(filename, dtype=np.float64)
+            return X, Y, filename
         else:
             mat = np.loadtxt(filename, dtype=np.float64)
             return mat[:, 1:], mat[:, 0], filename
