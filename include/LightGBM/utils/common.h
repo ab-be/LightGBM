@@ -652,6 +652,9 @@ inline static bool CheckDoubleEqual(double a, double b) {
   return b >= lower && b <= upper;
 }
 
+inline static double GetDoubleUpperBound(double a) {
+  return std::nextafter(a, INFINITY);;
+}
 
 }  // namespace Common
 
